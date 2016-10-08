@@ -37,6 +37,7 @@ dependencies {
   //Third Patry
   compile 'com.google.code.gson:gson:2.7'
   compile 'com.jakewharton.timber:timber:4.3.0'
+  compile 'net.danlew:android.joda:2.9.4.2'
 
   //Butterknife
   compile "com.jakewharton:butterknife:${BUTTERKNIFE_VERSION}"
