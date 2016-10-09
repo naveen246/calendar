@@ -23,6 +23,7 @@ public class CalendarScrollerDateAdapter
   private int selectedDayTextColor;
   private int selectedDayBackgroundColor;
   private boolean displayDayOfWeek = true;
+  private int selectedPosition = -1;
 
   public CalendarScrollerDateAdapter(Context context, Listener listener,
       AttributeSet attributeSet) {
@@ -39,7 +40,7 @@ public class CalendarScrollerDateAdapter
     return viewHolder;
   }
 
-  @Override public void onBindViewHolder(final DateViewHolder holder, int position) {
+  @Override public void onBindViewHolder(final DateViewHolder holder, final int position) {
     final CalendarScrollerDate date = calendarScrollerDates.get(position);
     listener.changeMonth(date);
     holder.dayOfMonthTextView.setText(date.dayOfMonth);
@@ -47,10 +48,16 @@ public class CalendarScrollerDateAdapter
     if (!displayDayOfWeek) {
       holder.dayOfWeekTextView.setVisibility(View.INVISIBLE);
     }
-    holder.dayOfMonthTextView.setTextColor(dayTextColor);
-    holder.dayOfWeekTextView.setTextColor(dayTextColor);
+    if (position == selectedPosition) {
+      highlightSelectedDate(holder);
+    } else {
+      holder.dayOfMonthTextView.setTextColor(dayTextColor);
+      holder.dayOfWeekTextView.setTextColor(dayTextColor);
+      holder.itemView.setBackgroundColor(getColor(R.color.defaultDayBackgroundColor));
+    }
     holder.itemView.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
+        selectedPosition = position;
         highlightSelectedDate(holder);
         listener.onDateSelected(date);
       }

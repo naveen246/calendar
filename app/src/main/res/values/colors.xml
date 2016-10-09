@@ -5,6 +5,8 @@
   <color name="colorAccent">#FF4081</color>
 
   <color name="defaultDaysContainerBackgroundColor">#00000000</color>
+
+  <color name="defaultDayBackgroundColor">#00000000</color>
   <color name="defaultSelectedDayBackgroundColor">#00000000</color>
 
   <color name="defaultDayTextColor">#ffffff</color>
