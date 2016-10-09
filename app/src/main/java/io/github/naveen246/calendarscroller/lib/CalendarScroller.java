@@ -130,11 +130,6 @@ public class CalendarScroller extends FrameLayout implements CalendarScrollerDat
 
   }
 
-  public void changeLayoutDirection(String direction) {
-    datesLayoutManager.setReverseLayout(true);
-    viewHolder.dateRecyclerView.setLayoutManager(datesLayoutManager);
-  }
-
   class ScrollerViewHolder {
     @BindView(R.id.textview_month_year) TextView monthYearTextView;
     @BindView(R.id.recyclerview_date) RecyclerView dateRecyclerView;
