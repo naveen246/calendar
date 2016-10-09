@@ -1,6 +1,7 @@
 package io.github.naveen246.calendarscroller.lib;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -22,6 +23,9 @@ public class CalendarScroller extends FrameLayout implements CalendarScrollerDat
   private LinearLayoutManager datesLayoutManager;
   private CalendarScrollerDateAdapter dateAdapter;
   private LocalDateTime initialDateTime;
+  private AttributeSet attributeSet;
+  private int daysContainerBackgroundColor;
+  private int monthYearTextColor;
 
   public CalendarScroller(Context context) {
     super(context);
@@ -40,17 +44,20 @@ public class CalendarScroller extends FrameLayout implements CalendarScrollerDat
 
   private void init(Context context, AttributeSet attributeSet) {
     this.context = context;
+    this.attributeSet = attributeSet;
     JodaTimeAndroid.init(context);
     View view = LayoutInflater.from(context).inflate(R.layout.layout_calendar_scroller, this, true);
     viewHolder = new ScrollerViewHolder(view);
-    initializeViews();
+    setDefaultColors();
+    parseAttributes();
+    initializeViews(attributeSet);
   }
 
-  private void initializeViews() {
+  private void initializeViews(AttributeSet attributeSet) {
     datesLayoutManager = new LinearLayoutManager(context);
     datesLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
     viewHolder.dateRecyclerView.setLayoutManager(datesLayoutManager);
-    dateAdapter = new CalendarScrollerDateAdapter(this);
+    dateAdapter = new CalendarScrollerDateAdapter(context, this, attributeSet);
     initialDateTime = new LocalDateTime();
     dateAdapter.addData(getMonthData(initialDateTime));
     viewHolder.dateRecyclerView.setAdapter(dateAdapter);
@@ -60,6 +67,8 @@ public class CalendarScroller extends FrameLayout implements CalendarScrollerDat
             loadMoreData(page);
           }
         });
+    viewHolder.dateRecyclerView.setBackgroundColor(daysContainerBackgroundColor);
+    viewHolder.monthYearTextView.setTextColor(monthYearTextColor);
   }
 
   public void loadMoreData(int page) {
@@ -83,12 +92,37 @@ public class CalendarScroller extends FrameLayout implements CalendarScrollerDat
     return dates;
   }
 
+  private void parseAttributes() {
+    if (attributeSet != null) {
+      TypedArray a = context.getTheme()
+          .obtainStyledAttributes(attributeSet, R.styleable.CalendarScroller, 0, 0);
+      try {
+        monthYearTextColor = a.getColor(R.styleable.CalendarScroller_monthYearTextColor,
+            getColor(R.color.defaultDayTextColor));
+        daysContainerBackgroundColor =
+            a.getColor(R.styleable.CalendarScroller_daysContainerBackgroundColor,
+                getColor(R.color.defaultDaysContainerBackgroundColor));
+      } finally {
+        a.recycle();
+      }
+    }
+  }
+
+  private void setDefaultColors() {
+    monthYearTextColor = getColor(R.color.defaultDayTextColor);
+    daysContainerBackgroundColor = getColor(R.color.defaultDaysContainerBackgroundColor);
+  }
+
+  private int getColor(int resId) {
+    return context.getResources().getColor(resId);
+  }
+
   public void changeMonth(CalendarScrollerDate date) {
     viewHolder.monthYearTextView.setText(date.month + " " + date.year);
   }
 
   @Override public void onDateSelected(CalendarScrollerDate date) {
-    
+
   }
 
   public void changeLayoutDirection(String direction) {

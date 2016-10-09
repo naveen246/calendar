@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <declare-styleable name="CalendarScroller">
+
+    <!-- Behaviour attributes -->
+    <attr format="boolean" name="displayDayOfWeek"/>
+
+    <!-- Days Container styling -->
+    <attr format="color" name="daysContainerBackgroundColor"/>
+
+    <attr format="color" name="dayTextColor"/>
+    <attr format="color" name="selectedDayTextColor"/>
+    <attr format="color" name="selectedDayBackgroundColor"/>
+
+    <attr format="color" name="monthYearTextColor"/>
+
+  </declare-styleable>
+</resources>
