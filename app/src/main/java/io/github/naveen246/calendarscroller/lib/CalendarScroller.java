@@ -16,7 +16,7 @@ import java.util.List;
 import net.danlew.android.joda.JodaTimeAndroid;
 import org.joda.time.LocalDateTime;
 
-public class CalendarScroller extends FrameLayout {
+public class CalendarScroller extends FrameLayout implements CalendarScrollerDateAdapter.Listener {
   private Context context;
   private ScrollerViewHolder viewHolder;
   private LinearLayoutManager datesLayoutManager;
@@ -85,6 +85,10 @@ public class CalendarScroller extends FrameLayout {
 
   public void changeMonth(CalendarScrollerDate date) {
     viewHolder.monthYearTextView.setText(date.month + " " + date.year);
+  }
+
+  @Override public void onDateSelected(CalendarScrollerDate date) {
+    
   }
 
   public void changeLayoutDirection(String direction) {

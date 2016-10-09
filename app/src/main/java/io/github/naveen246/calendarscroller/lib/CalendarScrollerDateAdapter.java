@@ -14,10 +14,10 @@ import java.util.List;
 public class CalendarScrollerDateAdapter
     extends RecyclerView.Adapter<CalendarScrollerDateAdapter.DateViewHolder> {
   private List<CalendarScrollerDate> calendarScrollerDates = new ArrayList<>();
-  private CalendarScroller scroller;
+  private Listener listener;
 
-  public CalendarScrollerDateAdapter(CalendarScroller scroller) {
-    this.scroller = scroller;
+  public CalendarScrollerDateAdapter(Listener listener) {
+    this.listener = listener;
   }
 
   @Override public DateViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -28,10 +28,16 @@ public class CalendarScrollerDateAdapter
   }
 
   @Override public void onBindViewHolder(DateViewHolder holder, int position) {
-    CalendarScrollerDate date = calendarScrollerDates.get(position);
-    scroller.changeMonth(date);
+    final CalendarScrollerDate date = calendarScrollerDates.get(position);
+    listener.changeMonth(date);
     holder.dateTextView.setText(date.dayOfMonth);
     holder.dayTextView.setText(date.dayOfWeek);
+    holder.itemView.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        listener.onDateSelected(date);
+      }
+    });
   }
 
   @Override public int getItemCount() {
@@ -51,5 +57,10 @@ public class CalendarScrollerDateAdapter
       super(itemView);
       ButterKnife.bind(this, itemView);
     }
+  }
+
+  public interface Listener {
+    void changeMonth(CalendarScrollerDate date);
+    void onDateSelected(CalendarScrollerDate date);
   }
 }
