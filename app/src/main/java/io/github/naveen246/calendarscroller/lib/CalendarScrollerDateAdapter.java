@@ -34,8 +34,8 @@ public class CalendarScrollerDateAdapter
   }
 
   @Override public DateViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-    View view =
-        LayoutInflater.from(parent.getContext()).inflate(R.layout.item_calendar_scroller, parent, false);
+    View view = LayoutInflater.from(parent.getContext())
+        .inflate(R.layout.item_calendar_scroller, parent, false);
     DateViewHolder viewHolder = new DateViewHolder(view);
     return viewHolder;
   }
