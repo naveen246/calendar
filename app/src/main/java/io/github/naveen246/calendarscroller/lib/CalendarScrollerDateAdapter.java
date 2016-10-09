@@ -42,7 +42,7 @@ public class CalendarScrollerDateAdapter
 
   @Override public void onBindViewHolder(final DateViewHolder holder, final int position) {
     final CalendarScrollerDate date = calendarScrollerDates.get(position);
-    listener.changeMonth(date);
+    listener.setMonth(date);
     holder.dayOfMonthTextView.setText(date.dayOfMonth);
     holder.dayOfWeekTextView.setText(date.dayOfWeek);
     if (!displayDayOfWeek) {
@@ -109,7 +109,7 @@ public class CalendarScrollerDateAdapter
   }
 
   public interface Listener {
-    void changeMonth(CalendarScrollerDate date);
+    void setMonth(CalendarScrollerDate date);
 
     void onDateSelected(CalendarScrollerDate date);
   }

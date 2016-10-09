@@ -13,6 +13,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.github.naveen246.calendarscroller.R;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import net.danlew.android.joda.JodaTimeAndroid;
@@ -27,6 +28,7 @@ public class CalendarScroller extends FrameLayout implements CalendarScrollerDat
   private AttributeSet attributeSet;
   private int daysContainerBackgroundColor;
   private int monthYearTextColor;
+  private DateSelectedListener listener;
 
   public CalendarScroller(Context context) {
     super(context);
@@ -72,7 +74,7 @@ public class CalendarScroller extends FrameLayout implements CalendarScrollerDat
     viewHolder.monthYearTextView.setTextColor(monthYearTextColor);
   }
 
-  public void loadMoreData(int page) {
+  private void loadMoreData(int page) {
     LocalDateTime date = initialDateTime.withDayOfMonth(1).plusMonths(page);
     dateAdapter.addData(getMonthData(date));
   }
@@ -82,12 +84,7 @@ public class CalendarScroller extends FrameLayout implements CalendarScrollerDat
     LocalDateTime start = dateTime.dayOfMonth().withMinimumValue();
     LocalDateTime end = dateTime.dayOfMonth().withMaximumValue();
     for (LocalDateTime date = start; !date.isAfter(end); date = date.plusDays(1)) {
-      String dayOfMonth = date.dayOfMonth().getAsText(getLocale());
-      String dayOfWeek = date.dayOfWeek().getAsShortText(getLocale());
-      String month = date.monthOfYear().getAsText(getLocale());
-      String year = date.year().getAsText(getLocale());
-      CalendarScrollerDate scrollerDate =
-          new CalendarScrollerDate(dayOfMonth, dayOfWeek, month, year);
+      CalendarScrollerDate scrollerDate = new CalendarScrollerDate(date, getLocale());
       dates.add(scrollerDate);
     }
     return dates;
@@ -122,12 +119,22 @@ public class CalendarScroller extends FrameLayout implements CalendarScrollerDat
     return context.getResources().getConfiguration().locale;
   }
 
-  public void changeMonth(CalendarScrollerDate date) {
+  public void setListener(DateSelectedListener listener) {
+    this.listener = listener;
+  }
+
+  @Override public void setMonth(CalendarScrollerDate date) {
     viewHolder.monthYearTextView.setText(date.month + " " + date.year);
   }
 
-  @Override public void onDateSelected(CalendarScrollerDate date) {
+  @Override public void onDateSelected(CalendarScrollerDate scrollerDate) {
+    if (listener != null) {
+      listener.onDateSelected(scrollerDate.toDate());
+    }
+  }
 
+  public interface DateSelectedListener {
+    void onDateSelected(Date date);
   }
 
   class ScrollerViewHolder {
