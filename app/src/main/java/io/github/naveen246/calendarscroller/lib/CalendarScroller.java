@@ -14,6 +14,7 @@ import butterknife.ButterKnife;
 import io.github.naveen246.calendarscroller.R;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import net.danlew.android.joda.JodaTimeAndroid;
 import org.joda.time.LocalDateTime;
 
@@ -81,10 +82,10 @@ public class CalendarScroller extends FrameLayout implements CalendarScrollerDat
     LocalDateTime start = dateTime.dayOfMonth().withMinimumValue();
     LocalDateTime end = dateTime.dayOfMonth().withMaximumValue();
     for (LocalDateTime date = start; !date.isAfter(end); date = date.plusDays(1)) {
-      String dayOfMonth = Integer.toString(date.getDayOfMonth());
-      String dayOfWeek = date.dayOfWeek().getAsShortText();
-      String month = date.monthOfYear().getAsText();
-      String year = date.year().getAsText();
+      String dayOfMonth = date.dayOfMonth().getAsText(getLocale());
+      String dayOfWeek = date.dayOfWeek().getAsShortText(getLocale());
+      String month = date.monthOfYear().getAsText(getLocale());
+      String year = date.year().getAsText(getLocale());
       CalendarScrollerDate scrollerDate =
           new CalendarScrollerDate(dayOfMonth, dayOfWeek, month, year);
       dates.add(scrollerDate);
@@ -115,6 +116,10 @@ public class CalendarScroller extends FrameLayout implements CalendarScrollerDat
 
   private int getColor(int resId) {
     return context.getResources().getColor(resId);
+  }
+
+  private Locale getLocale() {
+    return context.getResources().getConfiguration().locale;
   }
 
   public void changeMonth(CalendarScrollerDate date) {
