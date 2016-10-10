@@ -23,12 +23,13 @@ public class CalendarScrollerDateAdapter
   private int selectedDayTextColor;
   private int selectedDayBackgroundColor;
   private boolean displayDayOfWeek = true;
-  private int selectedPosition = -1;
+  private int selectedPosition;
 
-  public CalendarScrollerDateAdapter(Context context, Listener listener,
-      AttributeSet attributeSet) {
+  public CalendarScrollerDateAdapter(Context context, Listener listener, AttributeSet attributeSet,
+      int selectedPosition) {
     this.listener = listener;
     this.context = context;
+    this.selectedPosition = selectedPosition;
     setDefaultColors();
     parseAttributes(attributeSet);
   }
@@ -58,7 +59,7 @@ public class CalendarScrollerDateAdapter
     holder.itemView.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         selectedPosition = position;
-        highlightSelectedDate(holder);
+        notifyDataSetChanged();
         listener.onDateSelected(date);
       }
     });

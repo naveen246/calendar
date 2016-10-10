@@ -22,9 +22,9 @@ import org.joda.time.LocalDateTime;
 public class CalendarScroller extends FrameLayout implements CalendarScrollerDateAdapter.Listener {
   private Context context;
   private ScrollerViewHolder viewHolder;
-  private LinearLayoutManager datesLayoutManager;
+  private LinearLayoutManager dateLayoutManager;
   private CalendarScrollerDateAdapter dateAdapter;
-  private LocalDateTime initialDateTime;
+  private LocalDateTime currentDateTime;
   private AttributeSet attributeSet;
   private int daysContainerBackgroundColor;
   private int monthYearTextColor;
@@ -32,20 +32,20 @@ public class CalendarScroller extends FrameLayout implements CalendarScrollerDat
 
   public CalendarScroller(Context context) {
     super(context);
-    init(context, null);
+    initialize(context, null);
   }
 
   public CalendarScroller(Context context, AttributeSet attributeSet) {
     super(context, attributeSet);
-    init(context, attributeSet);
+    initialize(context, attributeSet);
   }
 
   public CalendarScroller(Context context, AttributeSet attributeSet, int defStyleAttr) {
     super(context, attributeSet, defStyleAttr);
-    init(context, attributeSet);
+    initialize(context, attributeSet);
   }
 
-  private void init(Context context, AttributeSet attributeSet) {
+  private void initialize(Context context, AttributeSet attributeSet) {
     this.context = context;
     this.attributeSet = attributeSet;
     JodaTimeAndroid.init(context);
@@ -57,15 +57,12 @@ public class CalendarScroller extends FrameLayout implements CalendarScrollerDat
   }
 
   private void initializeViews(AttributeSet attributeSet) {
-    datesLayoutManager = new LinearLayoutManager(context);
-    datesLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-    viewHolder.dateRecyclerView.setLayoutManager(datesLayoutManager);
-    dateAdapter = new CalendarScrollerDateAdapter(context, this, attributeSet);
-    initialDateTime = new LocalDateTime();
-    dateAdapter.addData(getMonthData(initialDateTime));
-    viewHolder.dateRecyclerView.setAdapter(dateAdapter);
+    currentDateTime = new LocalDateTime();
+    int currentDatePosition = currentDateTime.getDayOfMonth() - 1;
+    setDateAdapter(attributeSet, currentDateTime, currentDatePosition);
+    setDateLayoutManager(currentDatePosition);
     viewHolder.dateRecyclerView.addOnScrollListener(
-        new CalendarScrollerListener(datesLayoutManager) {
+        new CalendarScrollerListener(dateLayoutManager) {
           @Override public void onLoadMore(int page, int totalItemsCount) {
             loadMoreData(page);
           }
@@ -74,8 +71,21 @@ public class CalendarScroller extends FrameLayout implements CalendarScrollerDat
     viewHolder.monthYearTextView.setTextColor(monthYearTextColor);
   }
 
+  private void setDateAdapter(AttributeSet attributeSet, LocalDateTime dateTime, int position) {
+    dateAdapter = new CalendarScrollerDateAdapter(context, this, attributeSet, position);
+    dateAdapter.addData(getMonthData(dateTime));
+    viewHolder.dateRecyclerView.setAdapter(dateAdapter);
+  }
+
+  private void setDateLayoutManager(int scrollPosition) {
+    dateLayoutManager = new LinearLayoutManager(context);
+    dateLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+    dateLayoutManager.scrollToPosition(scrollPosition);
+    viewHolder.dateRecyclerView.setLayoutManager(dateLayoutManager);
+  }
+
   private void loadMoreData(int page) {
-    LocalDateTime date = initialDateTime.withDayOfMonth(1).plusMonths(page);
+    LocalDateTime date = currentDateTime.withDayOfMonth(1).plusMonths(page);
     dateAdapter.addData(getMonthData(date));
   }
 
